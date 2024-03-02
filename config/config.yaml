@@ -1,0 +1,7 @@
+model:
+  img_height: 256
+  img_width: 256
+
+view:
+  img_display_height: 256
+  img_display_width: 256
