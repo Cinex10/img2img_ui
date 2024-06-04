@@ -6,4 +6,5 @@ PyYAML==6.0.1
 streamlit==1.29.0
 streamlit_drawable_canvas==0.9.3
 torch==2.2.0
+streamlit-image-select
 torchvision==0.17.0
