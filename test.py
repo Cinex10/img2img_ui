@@ -21,7 +21,8 @@ def initialize_state():
 
 initialize_state()
 
-uploaded_image = None
+# uploaded_image = None
+uploaded_image =  st.sidebar.file_uploader("Upload source image", type=["png", "jpg"])
 
 models = {
 "edges2shoes" : View('edges2shoes',can_draw=True,uploaded_image=uploaded_image),
@@ -48,22 +49,22 @@ with col2:
     
     _, col4, _ = st.columns(3,gap="large")
     with col4:
-        st.button('Translate',use_container_width=True)
+        st.button('Translate',use_container_width=True,on_click= models[selected_model].generate)
 with col3:
-    st.image('assets/bag.jpeg',width=256*2,use_column_width='always')
-    #match st.session_state['loading_state']:
-    #    case 'init':
-    #        pass
-    #    case 'loading':
-    #        st.spinner('Wait for it...')
-    #            
-    #    case 'completed':
-    #        if (st.session_state['target'] is not None):
-    #            #print(st.session_state['target'].size)
-    #            st.image(st.session_state['target'],width=256*2)
-    #    case _:
-    #        html_string = '<div style="text-align: center;border: thin solid rgba(255, 255, 255, 0.46);border-radius: 15px;width: 600px;height: 400px;display: flex;flex-wrap: nowrap;justify-content: center;align-items: center;">this is an html string</div>'
-    #        st.markdown(html_string, unsafe_allow_html=True)
+    # st.image('assets/bag.jpeg',width=256*2,use_column_width='always')
+    match st.session_state['loading_state']:
+       case 'init':
+           pass
+       case 'loading':
+           st.spinner('Wait for it...')
+               
+       case 'completed':
+           if (st.session_state['target'] is not None):
+               #print(st.session_state['target'].size)
+               st.image(st.session_state['target'],width=256*2)
+       case _:
+           html_string = '<div style="text-align: center;border: thin solid rgba(255, 255, 255, 0.46);border-radius: 15px;width: 600px;height: 400px;display: flex;flex-wrap: nowrap;justify-content: center;align-items: center;">this is an html string</div>'
+           st.markdown(html_string, unsafe_allow_html=True)
  
 if (st.session_state['duration'] is not None):
     st.success(f'Time elapsed {st.session_state["duration"]:.2f} sec',icon='🚀')

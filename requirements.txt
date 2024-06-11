@@ -1,10 +1,8 @@
-numpy==1.26.4
-Pillow==9.0.1
-Pillow==10.3.0
-PyYAML==5.4.1
-PyYAML==6.0.1
-streamlit==1.29.0
-streamlit_drawable_canvas==0.9.3
-torch==2.2.0
+numpy
+Pillow
+PyYAML
+streamlit
+streamlit_drawable_canvas
+torch
 streamlit-image-select
-torchvision==0.17.0
+torchvision

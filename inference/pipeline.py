@@ -1,4 +1,5 @@
 from glob import glob
+import pdb
 import torch
 from typing import Any
 from .model_card import ModelCard
@@ -22,11 +23,14 @@ class Pipeline:
         self.model.eval()
     
     def __call__(self,source, *args: Any, **kwds: Any) -> Any:
-        x = ut.get_input_image(source)
-        x = self.preprocess(x)
+        x1 = ut.get_input_image(source)
+        x = self.preprocess(x1)
         duration,y = self.forward(x)
         print(duration)
-        y = self.postprocessing(y)
+        if self.name == 'colorization':
+            y = ut.lab2rgb(x,y)
+        else:
+            y = self.postprocessing(y)
         return duration,y
         
         
@@ -34,6 +38,7 @@ class Pipeline:
     def preprocess(self,source):
         transform = self.model_card.transfrom
         source = transform(source)
+        pdb.set_trace()
         return source.unsqueeze(0)
 
     def postprocessing(self,source):

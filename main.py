@@ -20,8 +20,12 @@ initialize_state()
 uploaded_image = st.sidebar.file_uploader("Upload source image", type=["png", "jpg"])
 
 models = {
-"edges2shoes" : View('edges2shoes',can_draw=True,uploaded_image=uploaded_image),
-"colorization" : View('colorization',uploaded_image=uploaded_image)    
+"colorization" : View('colorization',uploaded_image=uploaded_image),    
+#  "night2day" : View('night2day',uploaded_image=uploaded_image),
+#  "day2night" : View('day2night',uploaded_image=uploaded_image),
+#  "label2gta" : View('label2gta',uploaded_image=uploaded_image),
+#   "gta2city" : View('gta2city',uploaded_image=uploaded_image),
+#  "city2gta" : View('city2gta',uploaded_image=uploaded_image),
 }
 
 
@@ -29,9 +33,9 @@ selected_model = st.sidebar.selectbox(
     "Choose a model",
     Pipeline.options
 )
-
-
 st.sidebar.button('Generate',on_click= models[selected_model].generate)
+
+
 
 
 st.sidebar.expander('label', expanded=True)  
@@ -51,7 +55,7 @@ with col2:
         case 'completed':
             if (st.session_state['target'] is not None):
                 #print(st.session_state['target'].size)
-                st.image(st.session_state['target'],width=256*2)
+                st.image(st.session_state['target'],width=256*2,clamp=False)
         case _:
             html_string = '<div style="text-align: center;border: thin solid rgba(255, 255, 255, 0.46);border-radius: 15px;width: 600px;height: 400px;display: flex;flex-wrap: nowrap;justify-content: center;align-items: center;">this is an html string</div>'
             st.markdown(html_string, unsafe_allow_html=True)
