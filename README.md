@@ -24,7 +24,8 @@ As part of my end of study insternship, I built this Streamlit UI application th
 1. **Run the Streamlit app**:
 
    ```bash
-   streamlit run main.py
+   streamlit run ui_1.py # for the first ui
+   streamlit run ui_2.py # for the second ui (only edges)
    ```
 
    This will launch the Streamlit UI in your default web browser.

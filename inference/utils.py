@@ -1,6 +1,7 @@
 
 import functools
 from datetime import datetime
+import json
 import os
 import pdb
 from skimage import color
@@ -28,10 +29,10 @@ def get_transform(name=None,colorization=False):
         transforms.Resize((256, 256), Image.BICUBIC),
         transforms.ToTensor(),
         ]
-    # if colorization:
-    #     trans+=[transforms.Normalize((0.5), (0.5))]
-    # else:
-    #     trans+=[transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
+    if colorization:
+        trans+=[transforms.Normalize((0.5), (0.5))]
+    else:
+        trans+=[transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
     return transforms.Compose(trans)  
 
 def get_input_image(source) -> PIL.Image:
@@ -72,3 +73,9 @@ def lab2rgb(L, AB):
     Lab = np.transpose(Lab.astype(np.float64), (1, 2, 0))
     rgb = color.lab2rgb(Lab)
     return rgb
+
+
+def json2dict(filepath):
+    with open(filepath) as json_file:
+        data = json.load(json_file)
+    return data
