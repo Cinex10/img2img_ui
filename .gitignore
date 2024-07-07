@@ -2,6 +2,5 @@ test.ipynb
 results/*
 */__pycache__
 .vscode
-inference/model_zoo/*
 .DS_Store
 */.DS_Store
