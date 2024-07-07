@@ -39,7 +39,9 @@ def clear():
     st.session_state['init_draw'] = None
     
 def random_draw():
-    st.session_state['init_draw'] = random.choice(models[selected_model].predraws)
+    predraws = models[selected_model].predraws
+    if len(predraws) > 0:
+        st.session_state['init_draw'] = random.choice(predraws)
     # print(initial_draw)
 #selected_model = st.sidebar.selectbox(
 #    "Choose a model",
@@ -52,17 +54,21 @@ def random_draw():
 
 #st.sidebar.expander('label', expanded=True)  
 
+model = st.radio(
+    "Choose a model",
+    models[selected_model].available_models,
+    horizontal=True,
+)
+
 col1, col2, col3 = st.columns([2,1,2],gap="small")
 
 with col1:
     models[selected_model].render(st.session_state['init_draw'])
 with col2:
-    st.button('Translate',use_container_width=True,on_click= models[selected_model].generate,type='primary')
-    subcol1,subcol2 = st.columns(2)
-    with subcol1:
-        st.button('Clear',use_container_width=True,on_click= clear,)
-    with subcol2:
-        st.button('Random',use_container_width=True,on_click= random_draw,)
+    if st.button('Translate',use_container_width=True,type='primary'):
+        models[selected_model].generate(model)
+    st.button('Clear',use_container_width=True,on_click= clear,)
+    st.button('Random',use_container_width=True,on_click= random_draw,)
     
 with col3:
     # st.image('assets/bag.jpeg',width=256*2,use_column_width='always')

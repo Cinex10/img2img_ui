@@ -1,7 +1,8 @@
 import os
 import torch
-from .networks import define_G
+from .networks import define_G, define_G_pixHD
 from . import utils as ut
+from PIL import Image
 
 class ModelCard:
     def __init__(self,
@@ -25,6 +26,10 @@ class ModelCard:
                     'cyclegan' : ModelCard(
                     module= define_G(3,3,64,'resnet_9blocks','instance',False,'normal',0.02),
                     transform=ut.get_transform(),
+                ),
+                    'pix2pixHD' : ModelCard(
+                    module= define_G_pixHD(3, 3, 64, 'global', 4, 9,1, 3, 'instance'),
+                    transform=ut.get_pixHD_trans(resize_or_crop='scale_width',n_downsample_global=4,fineSize=512,loadSize=1024,n_local_enhancers=1,netG='global',params=ut.get_params('scale_width',1024,512,(256,256)), method=Image.NEAREST, normalize=False),
                 )
                 }
             case 'colorization':

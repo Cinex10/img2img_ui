@@ -4,6 +4,7 @@ from datetime import datetime
 import json
 import os
 import pdb
+import random
 from skimage import color
 import PIL
 import numpy as np
@@ -73,6 +74,74 @@ def lab2rgb(L, AB):
     Lab = np.transpose(Lab.astype(np.float64), (1, 2, 0))
     rgb = color.lab2rgb(Lab)
     return rgb
+
+def normalize():    
+    return transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+
+def __make_power_2(img, base, method=Image.BICUBIC):
+    ow, oh = img.size        
+    h = int(round(oh / base) * base)
+    w = int(round(ow / base) * base)
+    if (h == oh) and (w == ow):
+        return img
+    return img.resize((w, h), method)
+
+def __scale_width(img, target_width, method=Image.BICUBIC):
+    ow, oh = img.size
+    if (ow == target_width):
+        return img    
+    w = target_width
+    h = int(target_width * oh / ow)    
+    return img.resize((w, h), method)
+
+def __crop(img, pos, size):
+    ow, oh = img.size
+    x1, y1 = pos
+    tw = th = size
+    if (ow > tw or oh > th):        
+        return img.crop((x1, y1, x1 + tw, y1 + th))
+    return img
+
+def get_pixHD_trans(resize_or_crop,n_downsample_global,n_local_enhancers,loadSize,fineSize, params,netG, method=Image.BICUBIC, normalize=True):
+    transform_list = []
+    if 'resize' in resize_or_crop:
+        osize = [loadSize, loadSize]
+        transform_list.append(transforms.Scale(osize, method))   
+    elif 'scale_width' in resize_or_crop:
+        transform_list.append(transforms.Lambda(lambda img: __scale_width(img, loadSize, method)))
+        
+    if 'crop' in resize_or_crop:
+        transform_list.append(transforms.Lambda(lambda img: __crop(img, params['crop_pos'], fineSize)))
+
+    if resize_or_crop == 'none':
+        base = float(2 ** n_downsample_global)
+        if netG == 'local':
+            base *= (2 ** n_local_enhancers)
+        transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base, method)))
+
+    transform_list += [transforms.ToTensor()]
+
+    if normalize:
+        transform_list += [transforms.Normalize((0.5, 0.5, 0.5),
+                                                (0.5, 0.5, 0.5))]
+    transform_list += [transforms.Lambda(lambda x: x * 255)]
+    return transforms.Compose(transform_list)
+
+def get_params(resize_or_crop,loadSize,fineSize, size):
+    w, h = size
+    new_h = h
+    new_w = w
+    if resize_or_crop == 'resize_and_crop':
+        new_h = new_w = loadSize            
+    elif resize_or_crop == 'scale_width_and_crop':
+        new_w = loadSize
+        new_h = loadSize * h // w
+
+    x = random.randint(0, np.maximum(0, new_w - fineSize))
+    y = random.randint(0, np.maximum(0, new_h - fineSize))
+    
+    flip = random.random() > 0.5
+    return {'crop_pos': (x, y), 'flip': flip}
 
 
 def json2dict(filepath):

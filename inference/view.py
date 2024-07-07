@@ -13,6 +13,11 @@ from . import utils as ut
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+@st.cache_data
+def get_predraws(name):
+    predraws = [ut.json2dict(x) for x in glob(os.path.join(ROOT_DIR,'predrawn_canvas',name,'*'))]
+    return predraws
+
 
 class View:
     def __init__(self,name,uploaded_image=None,can_draw:bool=False,**kwargs):
@@ -20,7 +25,7 @@ class View:
         self.uploaded_image = uploaded_image
         self.pipeline = Pipeline(name)
         self.available_models = self.pipeline.available_models
-        self.predraws = [ut.json2dict(x) for x in glob(os.path.join(ROOT_DIR,'predrawn_canvas',name,'*'))]
+        self.predraws = get_predraws(name)
         
     def render(self,initial_draw=None, *args: Any, **kwds: Any) -> Any:
         if self.uploaded_image is not None:
